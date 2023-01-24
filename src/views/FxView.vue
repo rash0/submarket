@@ -1,11 +1,6 @@
 <template>
-  <div class="container bg-red-100 rounded-xl shadow border p-8 m-10">
-    <div class="mb-12">
-      <p class="mb-2 text-sm">Exchange Rate</p>
-      <p class="text-3xl font-semibold">{{ exRate }}
-        <span class="text-xs font-light">EGP</span>
-      </p>
-    </div>
+  <div class="container bg-red-100 rounded-xl shadow border p-4 mx-auto mb-12">
+    <currencyResult :exRate="exRate" :resultCurrency="resultCurrency"/>
     <div class="container">
       <input v-model="fromCurrency" class="rounded-md py-1 pl-2 ml-auto border-gray-200 shadow-sm sm:text-sm" />
       <input v-model="toCurrency" class="rounded-md py-1 pl-2 ml-6 border-gray-200 shadow-sm sm:text-sm" />
@@ -15,18 +10,22 @@
 </template>
 
 <script>
+import currencyResult from '@/components/currencyResult.vue';
 const axios = require('axios');
 
 const APIKEY = 'XUDPEUZ51PPCFW5Y'
 
 export default {
   name: 'FxView',
+  components:{
+    currencyResult
+  },
   data(){
     return {
       exRate: 0,
+      resultCurrency: 'EGP',
       fromCurrency: 'USD',
       toCurrency: 'EGP',
-      charData: []
     }
   },
   methods:{
@@ -42,6 +41,7 @@ export default {
         let result = res.data['Realtime Currency Exchange Rate']
         let rateValue = Object.values(result)[4]
         this.exRate = Math.round(rateValue * 100) / 100
+        this.resultCurrency = Object.values(result)[2]
       })
       .catch(err => console.log(err))
     }

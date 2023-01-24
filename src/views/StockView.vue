@@ -1,6 +1,6 @@
 <template>
-  <div class="container bg-blue-100 rounded-xl shadow border p-8 m-10">
-    <p class="text-3xl text-gray-700 font-bold mb-5">
+  <div class="container bg-blue-100 rounded-xl shadow border p-4 mx-auto mb-12">
+    <p class="text-3xl text-gray-700 font-light mb-5">
       Stock Prices
     </p>
     <div class="flex rounded-md">
@@ -9,40 +9,28 @@
     </div>
     <!-- <LoadingSpinner v-if="!isLoading"/> -->
     <!-- <p v-if="errorMsg !== '' ">{{ errorMsg }}</p> -->
-    <div class="footer" v-if="stockPrice !== ''">
-      <div class="stock-head container my-3">
+    <div class="footer my-12" v-if="stockPrice !== ''">
+      <div class="stock-head container mb-3">
         <p>{{ stockName.toUpperCase() }}</p>
         <p :class="[isHigher , 'text-2xl font-bold']">
           {{ stockPrice }}
         </p>
       </div>
-      <div class="stock-footer grid grid-cols-4">
-        <div>
-          <p class="text-xs">Open</p>
-          <p class="text-base font-semibold">{{ openNum }}</p>
-        </div>
-        <div>
-          <p class="text-xs">Close</p>
-          <p class="text-base font-semibold">{{ closeNum }}</p>
-        </div>
-        <div>
-          <p class="text-xs">High</p>
-          <p class="text-base font-semibold">{{ highNum }}</p>
-        </div>
-        <div>
-          <p class="text-xs">Low</p>
-          <p class="text-base font-semibold">{{ lowNum }}</p>
-        </div>
+      <div class="stock-footer grid grid-cols-4 px-64">
+        <StockDetails detailname="Open" :detailsNum="openNum"/>
+        <StockDetails detailname="Close" :detailsNum="closeNum"/>
+        <StockDetails detailname="High" :detailsNum="highNum"/>
+        <StockDetails detailname="Low" :detailsNum="lowNum"/>
       </div>
     </div>
-    <div class="container" style="width: 800px">
+    <div class="container m-auto mt-6" style="width: 800px">
       <canvas id="StockChart"></canvas>
     </div>
  </div>
 </template>
 
 <script>
-// import LoadingSpinner from './LoadingSpinner.vue';
+import StockDetails from '@/components/StockDetails.vue';
 const axios = require('axios');
 import Chart from 'chart.js/auto';
 
@@ -51,9 +39,9 @@ const APIKEY = 'XUDPEUZ51PPCFW5Y'
 
 export default {
   name: 'StockView',
-  // components: {
-  //   LoadingSpinner
-  // },
+  components: {
+    StockDetails
+},
   data(){
     return {
       // isLoading: false,
@@ -82,9 +70,6 @@ export default {
       })
       .then(res => {
         this.chartData = []
-        // this.getChart()
-        // this.isLoading = true;
-        // catch error if wrong api name by using if
         let result = res.data['Time Series (Daily)'];
         
         let newResult = Object.values(result)[0]
@@ -94,14 +79,12 @@ export default {
         this.highNum = Object.values(newResult)[1]
         this.lowNum = Object.values(newResult)[2]
         this.closeNum = Object.values(newResult)[3]
-        // console.log(res.data['Time Series (Daily)'])
         // get chart data
         for(let i = 0; i < 16; i++){
           let day = Object.keys(result)[i]
           let price = Object.values(Object.values(result)[i])[3]
           this.chartData.push({'day': day, 'price': Number(price)})
         }
-        // this.getChart()
       })
       .catch(() => this.errorMsg = 'This is a wrong stock')
       .then(() => this.getChart())
