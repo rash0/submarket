@@ -1,12 +1,16 @@
 <template>
   <nav>
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
+    <router-link to="/">Stock</router-link> |
+    <router-link to="/fx">Fx</router-link>
   </nav>
   <router-view/>
 </template>
 
 <style>
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
